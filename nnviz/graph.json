@@ -1,43 +1,21 @@
 {
-  "nodes": [
-    {
-      "name": "Peter",
-      "label": "Person",
-      "id": 1
-    },
-    {
-      "name": "Michael",
-      "label": "Person",
-      "id": 2
-    },
-    {
-      "name": "Neo4j",
-      "label": "Database",
-      "id": 3
-    },
-    {
-      "name": "Graph Database",
-      "label": "Database",
-      "id": 4
-    }
-  ],
-  "links": [
-    {
-      "source": 1,
-      "target": 2,
-      "type": "KNOWS",
-      "since": 2010
-    },
-    {
-      "source": 2,
-      "target": 3,
-      "type": "FOUNDED"
-    },
-    {
-      "source": 3,
-      "target": 4,
-      "type": "WORKS_ON"
-    }
-  ]
+    "id":"1",
+    "desc":"Data",
+    "children": [
+      {
+        "id":"2",
+        "desc":"Conv1",
+        "hasChild":true
+      },
+      {
+        "id":"3",
+        "desc": "Conv2",
+        "hasChild":true
+      },
+      {
+        "id":"4",
+        "desc":"ImageInfo",
+        "hasChild": false
+      }
+    ]
 }
-
