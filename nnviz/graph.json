@@ -29,19 +29,14 @@
       "since": 2010
     },
     {
-      "source": 1,
+      "source": 2,
       "target": 3,
       "type": "FOUNDED"
     },
     {
-      "source": 2,
-      "target": 3,
-      "type": "WORKS_ON"
-    },
-    {
       "source": 3,
       "target": 4,
-      "type": "IS_A"
+      "type": "WORKS_ON"
     }
   ]
 }
