@@ -16,7 +16,8 @@
     var node_coord_start_y = 50;
     var node_width = 100;
     var node_height = 30;
-    var node_fill = "#3a5072";
+    var node_distance = 20;
+    var node_fill = "#cca845";
     var label_fill = "#ffffff";
 
     // svgContainer
@@ -52,18 +53,19 @@
                                  .attr("font-size", "10px")
                                  .attr("fill", label_fill);
 
-        var paths = svgContainer.selectAll("path")
+        var paths = svgContainer.selectAll("line")
                                 .data(netData)
                                 .enter()
-                                .append("path")
-                                .attr("d", compute_path_distance(3, 4))
-                                .attr("stroke", "blue")
-                                .attr("stroke-width", 2)
-                                .attr("fill", "none");
+                                .append("line")
+                                .attr("x1", function (d) { return compute_path_x1 (d.id); })
+                                .attr("y1", function (d) { return compute_path_y1 (d.id); })
+                                .attr("x2", function (d) { return compute_path_x2 (d.linkid); })
+                                .attr("y2", function (d) { return compute_path_y2 (d.linkid); })
+                                .attr("stroke", "gray");
     }
 
     function compute_node_y (id) {
-        return node_coord_start_y + id * node_height * 2;
+        return node_coord_start_y + id * node_height + id * node_distance;
     }
 
     function compute_label_x (id) {
@@ -71,7 +73,23 @@
     }
 
     function compute_label_y (id) {
-        return node_coord_start_y + id * node_height * 2 + node_height / 2;
+        return node_coord_start_y + id * node_height + id * node_distance + node_height / 2;
+    }
+
+    function compute_path_x1 (id) {
+        return node_coord_start_x + node_width / 2;
+    }
+
+    function compute_path_y1 (id) {
+        return node_coord_start_y + id * node_height + id * node_distance;
+    }
+
+    function compute_path_x2 (id) {
+        return node_coord_start_x + node_width / 2;
+    }
+
+    function compute_path_y2 (id) {
+        return node_coord_start_y + id * node_height + id * node_distance + node_height;
     }
 
     </script>
