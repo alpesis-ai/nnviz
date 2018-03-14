@@ -36,7 +36,7 @@
                                   .data(netData)
                                   .enter()
                                   .append("rect")
-                                  .attr("x", function (d) { return compute_node_x (d.id); })
+                                  .attr("x", function (d) { return compute_node_x (d.id, d.step); })
                                   .attr("y", function (d) { return compute_node_y (d.id); })
                                   .attr("width", node_width )
                                   .attr("height", node_height )
@@ -64,8 +64,8 @@
                                 .attr("stroke", "gray");
     }
 
-    function compute_node_x (id) {
-        return node_coord_start_x;
+    function compute_node_x (id, step) {
+        return node_coord_start_x + step * (node_width + node_distance);
     }
 
     function compute_node_y (id) {
