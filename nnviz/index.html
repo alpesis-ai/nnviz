@@ -2,103 +2,101 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
-
-    <title>Collapsible Tree Example</title>
-
-    <style>
-
-	.node circle {
-	  fill: #fff;
-	  stroke: steelblue;
-	  stroke-width: 3px;
-	}
-
-	.node text { font: 12px sans-serif; }
-
-	.link {
-	  fill: none;
-	  stroke: #ccc;
-	  stroke-width: 2px;
-	}
-	
-    </style>
-
+    <title>Demo</title>
   </head>
 
   <body>
+    <script src="http://d3js.org/d3.v3.min.js"></script>
+    <script>
 
-<!-- load the d3.js library -->	
-<script src="http://d3js.org/d3.v3.min.js"></script>
-	
-<script>
+    var svg_width = 800;
+    var svg_height = 1600;
 
-// ************** Generate the tree diagram	 *****************
-var margin = {top: 40, right: 120, bottom: 20, left: 120},
-	width = 960 - margin.right - margin.left,
-	height = 500 - margin.top - margin.bottom;
-	
-var i = 0;
+    var node_coord_start_x = svg_width / 2;
+    var node_coord_start_y = 50;
+    var node_width = 100;
+    var node_height = 30;
+    var node_distance = 20;
+    var node_fill = "#cca845";
+    var label_fill = "#ffffff";
 
-var tree = d3.layout.tree()
-	.size([height, width]);
+    // svgContainer
+    var svgContainer = d3.select("body").append("svg")
+                                        .attr("width", svg_width)
+                                        .attr("height", svg_height);
+    // json
+    d3.json("network.json", function(error, netData) {
+        if (error) throw error;
+        update(netData);
+    });
 
-var diagonal = d3.svg.diagonal()
-	.projection(function(d) { return [d.x, d.y]; });
+    // update nodes
+    function update(netData) {
+        var nodes = svgContainer.selectAll("rect")
+                                  .data(netData)
+                                  .enter()
+                                  .append("rect")
+                                  .attr("x", function (d) { return compute_node_x (d.id); })
+                                  .attr("y", function (d) { return compute_node_y (d.id); })
+                                  .attr("width", node_width )
+                                  .attr("height", node_height )
+                                  .style("fill", node_fill);
 
-var svg = d3.select("body").append("svg")
-	.attr("width", width + margin.right + margin.left)
-	.attr("height", height + margin.top + margin.bottom)
-  .append("g")
-	.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+        var labels = svgContainer.selectAll("text")
+                                 .data(netData)
+                                 .enter()
+                                 .append("text")
+                                 .attr("x", function (d) { return compute_label_x (d.id); })
+                                 .attr("y", function (d) { return compute_label_y (d.id); })
+                                 .text(function (d) { return d.name; })
+                                 .attr("font-family", "sans-serif")
+                                 .attr("font-size", "10px")
+                                 .attr("fill", label_fill);
 
-d3.json("graph.json", function(error, graph) {
-  if (error) throw error;
-  update(graph[0]);
-});
+        var paths = svgContainer.selectAll("line")
+                                .data(netData)
+                                .enter()
+                                .append("line")
+                                .attr("x1", function (d) { return compute_path_x1 (d.id); })
+                                .attr("y1", function (d) { return compute_path_y1 (d.id); })
+                                .attr("x2", function (d) { return compute_path_x2 (d.linkid); })
+                                .attr("y2", function (d) { return compute_path_y2 (d.linkid); })
+                                .attr("stroke", "gray");
+    }
 
-function update(source) {
+    function compute_node_x (id) {
+        return node_coord_start_x;
+    }
 
-  // Compute the new tree layout.
-  var nodes = tree.nodes(source).reverse(),
-	  links = tree.links(nodes);
+    function compute_node_y (id) {
+        return node_coord_start_y + id * node_height + id * node_distance;
+    }
 
-  // Normalize for fixed-depth.
-  nodes.forEach(function(d) { d.y = d.depth * 100; });
+    function compute_label_x (id) {
+        return node_coord_start_x + node_width / 10;
+    }
 
-  // Declare the nodes…
-  var node = svg.selectAll("g.node")
-	  .data(nodes, function(d) { return d.id || (d.id = ++i); });
+    function compute_label_y (id) {
+        return node_coord_start_y + id * node_height + id * node_distance + node_height / 2 + 1;
+    }
 
-  // Enter the nodes.
-  var nodeEnter = node.enter().append("g")
-	  .attr("class", "node")
-	  .attr("transform", function(d) { 
-		  return "translate(" + d.x + "," + d.y + ")"; });
+    function compute_path_x1 (id) {
+        return node_coord_start_x + node_width / 2;
+    }
 
-  nodeEnter.append("circle")
-	  .attr("r", 10)
-	  .style("fill", "#fff");
+    function compute_path_y1 (id) {
+        return node_coord_start_y + id * node_height + id * node_distance;
+    }
 
-  nodeEnter.append("text")
-	  .attr("y", function(d) { 
-		  return d.children || d._children ? -18 : 18; })
-	  .attr("dy", ".35em")
-	  .attr("text-anchor", "middle")
-	  .text(function(d) { return d.name; })
-	  .style("fill-opacity", 1);
+    function compute_path_x2 (id) {
+        return node_coord_start_x + node_width / 2;
+    }
 
-  // Declare the links…
-  var link = svg.selectAll("path.link")
-	  .data(links, function(d) { return d.target.id; });
+    function compute_path_y2 (id) {
+        return node_coord_start_y + id * node_height + id * node_distance + node_height;
+    }
 
-  // Enter the links.
-  link.enter().insert("path", "g")
-	  .attr("class", "link")
-	  .attr("d", diagonal);
+    </script>
 
-}
-
-</script>
-	
   </body>
 </html>
