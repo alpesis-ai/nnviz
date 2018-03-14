@@ -12,12 +12,12 @@
     var svg_width = 800;
     var svg_height = 1600;
 
-    var node_coord_start_x = 50;
+    var node_coord_start_x = svg_width / 2;
     var node_coord_start_y = 50;
     var node_width = 100;
     var node_height = 30;
-    var node_fill = "#e3e3e3";
-    var label_fill = "black";
+    var node_fill = "#3a5072";
+    var label_fill = "#ffffff";
 
     // svgContainer
     var svgContainer = d3.select("body").append("svg")
@@ -36,7 +36,7 @@
                                   .enter()
                                   .append("rect")
                                   .attr("x", function (d) { return node_coord_start_x; })
-                                  .attr("y", function (d) { return node_coord_start_y + d.id * node_height * 2; })
+                                  .attr("y", function (d) { return compute_node_y (d.id); })
                                   .attr("width", node_width )
                                   .attr("height", node_height )
                                   .style("fill", node_fill);
@@ -45,13 +45,36 @@
                                  .data(netData)
                                  .enter()
                                  .append("text")
-                                 .attr("x", function (d) { return node_coord_start_x; })
-                                 .attr("y", function (d) { return node_coord_start_y + d.id * node_height * 2; })
+                                 .attr("x", function (d) { return compute_label_x (d.id); })
+                                 .attr("y", function (d) { return compute_label_y (d.id); })
                                  .text(function (d) { return d.name; })
                                  .attr("font-family", "sans-serif")
                                  .attr("font-size", "10px")
                                  .attr("fill", label_fill);
+
+        var paths = svgContainer.selectAll("path")
+                                .data(netData)
+                                .enter()
+                                .append("path")
+                                .attr("d", compute_path_distance(3, 4))
+                                .attr("stroke", "blue")
+                                .attr("stroke-width", 2)
+                                .attr("fill", "none");
     }
+
+    function compute_node_y (id) {
+        return node_coord_start_y + id * node_height * 2;
+    }
+
+    function compute_label_x (id) {
+        return node_coord_start_x + node_width / 3;
+    }
+
+    function compute_label_y (id) {
+        return node_coord_start_y + id * node_height * 2 + node_height / 2;
+    }
+
     </script>
+
   </body>
 </html>
